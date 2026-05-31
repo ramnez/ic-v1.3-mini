@@ -1,0 +1,15 @@
+{
+  "name": "حسابگر تعاملی ورود (v1.3 mini)",
+  "short_name": "IC v1.3 mini",
+  "start_url": "IC v1.3 mini.html",
+  "display": "standalone",
+  "background_color": "#0f111a",
+  "theme_color": "#00ff9d",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
