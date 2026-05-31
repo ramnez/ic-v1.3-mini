@@ -1,0 +1,17 @@
+
+self.addEventListener('install', (e) => {
+  e.waitUntil(
+    caches.open('calc-v1.3').then((cache) => {
+      return cache.addAll(['IC v1.3 mini.html', 'manifest.json']);
+    })
+  );
+});
+
+self.addEventListener('fetch', (e) => {
+  e.respondWith(
+    caches.match(e.request).then((response) => {
+      return response || fetch(e.request);
+    })
+  );
+});
+
