@@ -1,7 +1,7 @@
 
 {
-  "name": "حسابگر تعاملی ورود (v1.3 mini)",
-  "short_name": "IC v1.3 mini",
+  "name": "حسابگر تعاملی ورود (v1.4 mini)",
+  "short_name": "IC v1.4 mini",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#0f111a",
@@ -14,5 +14,3 @@
     }
   ]
 }
-
-
