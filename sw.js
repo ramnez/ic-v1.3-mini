@@ -1,7 +1,7 @@
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open('calc-v1.3').then((cache) => {
+    caches.open('calc-v1.4').then((cache) => {
       return cache.addAll(['index.html', 'manifest.json']);
     })
   );
@@ -14,5 +14,3 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
-
-
