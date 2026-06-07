@@ -6,7 +6,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IC v1.3 mini</title>
+    <title>IC v1.4 mini</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700&display=swap');
         
@@ -40,13 +40,30 @@
             padding: 16px;
         }
 
+        .header-row {
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #23283e; 
+            padding-bottom: 8px; 
+            margin-bottom: 16px;
+        }
+
         h2 { 
             font-size: 15px; 
             color: #00ff9d; 
-            margin-bottom: 16px; 
-            text-align: center; 
-            border-bottom: 1px solid #23283e;
-            padding-bottom: 8px;
+            margin: 0;
+        }
+
+        .lang-select {
+            background: #1f2335;
+            border: 1px solid #2f354f;
+            border-radius: 6px;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 12px;
+            width: auto;
+            font-family: inherit;
         }
 
         .input-group { margin-bottom: 12px; }
@@ -122,49 +139,64 @@
 
 <div class="container">
     <div class="card">
-        <h2>IC v1.3 mini</h2>
+        <div class="header-row">
+            <h2>IC v1.4 mini</h2>
+            <select id="langSelect" class="lang-select" onchange="changeLanguage()">
+                <option value="fa" selected>فارسی</option>
+                <option value="en">English</option>
+                <option value="de">Deutsch</option>
+            </select>
+        </div>
         
         <div class="row">
             <div class="input-group">
-                <label>جهت معامله</label>
+                <label data-i18n="dirLabel">جهت معامله</label>
                 <select id="positionType" onchange="calculate()">
                     <option value="buy" selected>خرید (Long)</option>
                     <option value="sell">فروش (Short)</option>
                 </select>
             </div>
             <div class="input-group">
-                <label>حد ضرر معامله ($)</label>
+                <label id="riskLabel">حد ضرر معامله ($)</label>
                 <input type="number" id="risk" value="10" oninput="calculate()">
             </div>
         </div>
 
         <div class="row">
             <div class="input-group">
-                <label>نقطه ورود (فیبوناچی ۱)</label>
+                <label data-i18n="entry">نقطه ورود (فیبوناچی ۱)</label>
                 <input type="number" id="entry" value="42000" oninput="calculate()">
             </div>
             <div class="input-group">
-                <label>قیمت استاپ لاس (فیبوناچی ۰)</label>
+                <label data-i18n="sl">قیمت استاپ لاس (فیبوناچی ۰)</label>
                 <input type="number" id="stopLoss" value="41940" oninput="calculate()">
             </div>
         </div>
 
         <div class="row-3">
-            <div class="input-group" style="flex: 1.1;">
-                <label>بروکر / نماد</label>
-                <select id="brokerSelect" onchange="updatePointValue()">
-                    <option value="1" selected>eplanetbrokers</option>
-                    <option value="1">Flatex</option>
-                    <option value="0.5">MYM (مایکرو)</option>
-                    <option value="5">YM (مینی)</option>
+            <div class="input-group" style="flex: 0.8;">
+                <label data-i18n="curr">ارز</label>
+                <select id="currencySelect" onchange="calculate()">
+                    <option value="usd" selected>USD</option>
+                    <option value="eur">EUR</option>
                 </select>
             </div>
-            <div class="input-group" style="flex: 0.9;">
-                <label>ارزش پوینت</label>
-                <input type="number" id="pointValue" value="1" step="0.1" oninput="calculate()">
+            <div class="input-group" style="flex: 1.2;">
+                <label data-i18n="broker">بروکر / نماد</label>
+                <select id="brokerSelect" onchange="updateBrokerSettings()">
+                    <option value="1" data-currency="usd" data-leverage="25" data-lang="fa" selected>eplanetbrokers</option>
+                    <option value="1" data-currency="eur" data-leverage="25" data-lang="de">Flatex</option>
+                    <option value="1" data-currency="eur" data-leverage="20" data-lang="de">Pepperstone</option>
+                    <option value="0.5" data-currency="usd" data-leverage="25" data-lang="fa">MYM</option>
+                    <option value="5" data-currency="usd" data-leverage="25" data-lang="fa">YM</option>
+                </select>
             </div>
             <div class="input-group" style="flex: 0.8;">
-                <label>اهرم</label>
+                <label data-i18n="point">ارزش پوینت</label>
+                <input type="number" id="pointValue" value="1" step="0.1" oninput="calculate()">
+            </div>
+            <div class="input-group" style="flex: 0.7;">
+                <label data-i18n="lev">اهرم</label>
                 <input type="number" id="leverage" value="25" oninput="calculate()">
             </div>
         </div>
@@ -172,55 +204,157 @@
 
     <div class="card">
         <div class="result-box">
-            <span>حجم معامله (Lot):</span>
+            <span data-i18n="lot">حجم معامله (Lot):</span>
             <span id="lot" class="green">0.00</span>
         </div>
         <div class="result-box">
-            <span>مارجین درگیر (Margin):</span>
+            <span data-i18n="margin">مارجین درگیر (Margin):</span>
             <div>
                 <span id="margin" class="ltr-text">$0.00</span>
-                <span id="marginCall" class="red ltr-text" style="font-size: 11px; margin-right: 6px;">(کال مارجین: 0)</span>
+                <span id="marginCall" class="red ltr-text" style="font-size: 11px; margin: 0 4px;">(کال مارجین: 0)</span>
             </div>
         </div>
         <div class="result-box">
-            <span>ضرر واقعی (Actual Risk):</span>
+            <span data-i18n="actualRisk">ضرر واقعی (Actual Risk):</span>
             <span id="actualRisk" class="red ltr-text">-$0.00</span>
         </div>
 
         <div class="fib-box">
             <div class="fib-row">
-                <span>تارگت اول (فیبوناچی ۲):</span>
+                <span data-i18n="tp1">تارگت اول (فیبوناچی ۲):</span>
                 <div>
                     <strong id="tp1Price" class="ltr-text">0</strong> 
-                    <span id="tp1Profit" class="green ltr-text" style="font-size: 11px; margin-right: 4px;">(+$0)</span>
+                    <span id="tp1Profit" class="green ltr-text" style="font-size: 11px; margin: 0 4px;">(+$0)</span>
                 </div>
             </div>
             <div class="fib-row">
-                <span>تارگت دوم (فیبوناچی ۳):</span>
+                <span data-i18n="tp2">تارگت دوم (فیبوناچی ۳):</span>
                 <div>
                     <strong id="tp2Price" class="ltr-text">0</strong> 
-                    <span id="tp2Profit" class="green ltr-text" style="font-size: 11px; margin-right: 4px;">(+$0)</span>
+                    <span id="tp2Profit" class="green ltr-text" style="font-size: 11px; margin: 0 4px;">(+$0)</span>
                 </div>
             </div>
             <div class="fib-row">
-                <span>تارگت سوم (فیبوناچی ۴) (دلخواه):</span>
+                <span data-i18n="tp3">تارگت سوم (فیبوناچی ۴) (دلخواه):</span>
                 <div>
                     <strong id="tp3Price" class="ltr-text">0</strong> 
-                    <span id="tp3Profit" class="green ltr-text" style="font-size: 11px; margin-right: 4px;">(+$0)</span>
+                    <span id="tp3Profit" class="green ltr-text" style="font-size: 11px; margin: 0 4px;">(+$0)</span>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <p>تمامی حقوق نشر (Copyright) این نرم‌افزار محفوظ است.</p>
+        <p data-i18n="footer">تمامی حقوق نشر (Copyright) این نرم‌افزار محفوظ است.</p>
     </div>
 </div>
 
 <script>
-function updatePointValue() {
-    document.getElementById('pointValue').value = document.getElementById('brokerSelect').value;
+const i18n = {
+    fa: {
+        dirLabel: "جهت معامله",
+        buyOpt: "خرید (Long)",
+        sellOpt: "فروش (Short)",
+        riskBase: "حد ضرر معامله",
+        entry: "نقطه ورود (فیبوناچی ۱)",
+        sl: "قیمت استاپ لاس (فیبوناچی ۰)",
+        curr: "ارز",
+        broker: "بروکر / نماد",
+        point: "ارزش پوینت",
+        lev: "اهرم",
+        lot: "حجم معامله (Lot):",
+        margin: "مارجین درگیر (Margin):",
+        mc: "کال مارجین:",
+        actualRisk: "ضرر واقعی (Actual Risk):",
+        tp1: "تارگت اول (فیبوناچی ۲):",
+        tp2: "تارگت دوم (فیبوناچی ۳):",
+        tp3: "تارگت سوم (فیبوناچی ۴) (دلخواه):",
+        footer: "تمامی حقوق نشر (Copyright) این نرم‌افزار محفوظ است."
+    },
+    en: {
+        dirLabel: "Position",
+        buyOpt: "Buy (Long)",
+        sellOpt: "Sell (Short)",
+        riskBase: "Risk Amount",
+        entry: "Entry Price (Fib 1)",
+        sl: "Stop Loss (Fib 0)",
+        curr: "Currency",
+        broker: "Broker / Symbol",
+        point: "Point Value",
+        lev: "Leverage",
+        lot: "Lot Size:",
+        margin: "Required Margin:",
+        mc: "Margin Call:",
+        actualRisk: "Actual Risk:",
+        tp1: "Target 1 (Fib 2):",
+        tp2: "Target 2 (Fib 3):",
+        tp3: "Target 3 (Fib 4) (Custom):",
+        footer: "All rights reserved."
+    },
+    de: {
+        dirLabel: "Position",
+        buyOpt: "Kaufen (Long)",
+        sellOpt: "Verkaufen (Short)",
+        riskBase: "Risiko-Betrag",
+        entry: "Einstiegspreis (Fib 1)",
+        sl: "Stop-Loss (Fib 0)",
+        curr: "Währung",
+        broker: "Broker / Symbol",
+        point: "Punktwert",
+        lev: "Hebel",
+        lot: "Positionsgröße (Lot):",
+        margin: "Benötigte Marge:",
+        mc: "Margin Call:",
+        actualRisk: "Tatsächliches Risiko:",
+        tp1: "Ziel 1 (Fib 2):",
+        tp2: "Ziel 2 (Fib 3):",
+        tp3: "Ziel 3 (Fib 4) (Benutzerdef.):",
+        footer: "Alle Rechte vorbehalten."
+    }
+};
+
+let currentLang = 'fa';
+
+function changeLanguage() {
+    currentLang = document.getElementById('langSelect').value;
+    document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+    document.documentElement.lang = currentLang;
+
+    // ترجمه متون ثابت
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang][key]) {
+            el.textContent = i18n[currentLang][key];
+        }
+    });
+
+    // ترجمه آپشن‌های جهت معامله
+    document.querySelector('#positionType option[value="buy"]').textContent = i18n[currentLang].buyOpt;
+    document.querySelector('#positionType option[value="sell"]').textContent = i18n[currentLang].sellOpt;
+
     calculate();
+}
+
+function updateBrokerSettings() {
+    const select = document.getElementById('brokerSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    
+    document.getElementById('pointValue').value = selectedOption.value;
+    
+    if (selectedOption.dataset.leverage) {
+        document.getElementById('leverage').value = selectedOption.dataset.leverage;
+    }
+    
+    if (selectedOption.dataset.currency) {
+        document.getElementById('currencySelect').value = selectedOption.dataset.currency;
+    }
+
+    if (selectedOption.dataset.lang) {
+        document.getElementById('langSelect').value = selectedOption.dataset.lang;
+        changeLanguage();
+    } else {
+        calculate();
+    }
 }
 
 function calculate() {
@@ -230,31 +364,30 @@ function calculate() {
     const pointValue = parseFloat(document.getElementById('pointValue').value) || 1;
     const leverage = parseFloat(document.getElementById('leverage').value) || 1;
     const positionType = document.getElementById('positionType').value;
+    
+    const currency = document.getElementById('currencySelect').value;
+    const sym = currency === 'eur' ? '€' : '$';
+    
+    document.getElementById('riskLabel').textContent = i18n[currentLang].riskBase + ' (' + sym + ')';
 
     if (entry === 0 || sl === 0 || entry === sl) {
-        resetOutputs();
+        resetOutputs(sym);
         return;
     }
 
     const isLong = positionType === 'buy';
     
-    // فاصله ورود تا حد ضرر
     const distance = Math.abs(entry - sl);
 
-    // محاسبه حجم
     let lotSize = risk / (distance * pointValue);
     
-    // محاسبه مارجین
     const margin = (lotSize * entry * pointValue) / leverage;
 
-    // محاسبه نقطه از دست رفتن کل مارجین (Margin Call)
     const distanceToEatMargin = margin / (lotSize * pointValue);
     const marginCallPrice = isLong ? (entry - distanceToEatMargin) : (entry + distanceToEatMargin);
     
-    // ضرر واقعی
     const actualRisk = lotSize * distance * pointValue;
 
-    // محاسبه نقاط فیبوناچی
     let tp1, tp2, tp3;
     if (isLong) {
         tp1 = entry + distance;       
@@ -266,41 +399,41 @@ function calculate() {
         tp3 = entry - (distance * 3);
     }
 
-    // محاسبه سود هر تارگت
     const tp1Profit = actualRisk; 
     const tp2Profit = actualRisk * 2;
     const tp3Profit = actualRisk * 3;
 
-    // نمایش خروجی‌ها
     document.getElementById('lot').textContent = lotSize.toFixed(3);
-    document.getElementById('margin').textContent = '$' + margin.toFixed(2);
-    document.getElementById('marginCall').textContent = '(کال مارجین: ' + marginCallPrice.toFixed(0) + ')';
-    document.getElementById('actualRisk').textContent = '-$' + actualRisk.toFixed(2);
+    document.getElementById('margin').textContent = sym + margin.toFixed(2);
+    document.getElementById('marginCall').textContent = '(' + i18n[currentLang].mc + ' ' + marginCallPrice.toFixed(0) + ')';
+    document.getElementById('actualRisk').textContent = '-' + sym + actualRisk.toFixed(2);
 
     document.getElementById('tp1Price').textContent = tp1.toFixed(0);
-    document.getElementById('tp1Profit').textContent = '(+$' + tp1Profit.toFixed(1) + ')';
+    document.getElementById('tp1Profit').textContent = '(+' + sym + tp1Profit.toFixed(1) + ')';
 
     document.getElementById('tp2Price').textContent = tp2.toFixed(0);
-    document.getElementById('tp2Profit').textContent = '(+$' + tp2Profit.toFixed(1) + ')';
+    document.getElementById('tp2Profit').textContent = '(+' + sym + tp2Profit.toFixed(1) + ')';
 
     document.getElementById('tp3Price').textContent = tp3.toFixed(0);
-    document.getElementById('tp3Profit').textContent = '(+$' + tp3Profit.toFixed(1) + ')';
+    document.getElementById('tp3Profit').textContent = '(+' + sym + tp3Profit.toFixed(1) + ')';
 }
 
-function resetOutputs() {
+function resetOutputs(sym) {
     document.getElementById('lot').textContent = "0.00";
-    document.getElementById('margin').textContent = "$0.00";
-    document.getElementById('marginCall').textContent = "(کال مارجین: 0)";
-    document.getElementById('actualRisk').textContent = "-$0.00";
+    document.getElementById('margin').textContent = sym + "0.00";
+    document.getElementById('marginCall').textContent = "(" + i18n[currentLang].mc + " 0)";
+    document.getElementById('actualRisk').textContent = "-" + sym + "0.00";
     document.getElementById('tp1Price').textContent = "0";
-    document.getElementById('tp1Profit').textContent = "(+$0)";
+    document.getElementById('tp1Profit').textContent = "(+" + sym + "0)";
     document.getElementById('tp2Price').textContent = "0";
-    document.getElementById('tp2Profit').textContent = "(+$0)";
+    document.getElementById('tp2Profit').textContent = "(+" + sym + "0)";
     document.getElementById('tp3Price').textContent = "0";
-    document.getElementById('tp3Profit').textContent = "(+$0)";
+    document.getElementById('tp3Profit').textContent = "(+" + sym + "0)";
 }
 
-window.onload = calculate;
+window.onload = function() {
+    changeLanguage(); // تنظیم اولیه متون بر اساس زبان پیش‌فرض
+};
 </script>
 
 <script>
