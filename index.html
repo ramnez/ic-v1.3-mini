@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -53,6 +52,11 @@
             font-size: 15px; 
             color: #00ff9d; 
             margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
         }
 
         .lang-select {
@@ -141,11 +145,17 @@
     <div class="card">
         <div class="header-row">
             <h2>IC v1.4 mini</h2>
-            <select id="langSelect" class="lang-select" onchange="changeLanguage()">
-                <option value="fa" selected>فارسی</option>
-                <option value="en">English</option>
-                <option value="de">Deutsch</option>
-            </select>
+            <div class="header-actions">
+                <select id="currencySelect" class="lang-select" onchange="calculate()">
+                    <option value="usd" selected>USD</option>
+                    <option value="eur">EUR</option>
+                </select>
+                <select id="langSelect" class="lang-select" onchange="changeLanguage()">
+                    <option value="fa" selected>فارسی</option>
+                    <option value="en">English</option>
+                    <option value="de">Deutsch</option>
+                </select>
+            </div>
         </div>
         
         <div class="row">
@@ -174,19 +184,12 @@
         </div>
 
         <div class="row-3">
-            <div class="input-group" style="flex: 0.8;">
-                <label data-i18n="curr">ارز</label>
-                <select id="currencySelect" onchange="calculate()">
-                    <option value="usd" selected>USD</option>
-                    <option value="eur">EUR</option>
-                </select>
-            </div>
             <div class="input-group" style="flex: 1.2;">
                 <label data-i18n="broker">بروکر / نماد</label>
                 <select id="brokerSelect" onchange="updateBrokerSettings()">
                     <option value="1" data-currency="usd" data-leverage="25" data-lang="fa" selected>eplanetbrokers</option>
                     <option value="1" data-currency="eur" data-leverage="25" data-lang="de">Flatex</option>
-                    <option value="1" data-currency="eur" data-leverage="20" data-lang="de">Pepperstone</option>
+                    <option value="1" data-currency="eur" data-leverage="30" data-lang="de">Pepperstone</option>
                     <option value="0.5" data-currency="usd" data-leverage="25" data-lang="fa">MYM</option>
                     <option value="5" data-currency="usd" data-leverage="25" data-lang="fa">YM</option>
                 </select>
@@ -221,21 +224,21 @@
 
         <div class="fib-box">
             <div class="fib-row">
-                <span data-i18n="tp1">تارگت اول (فیبوناچی ۲):</span>
+                <span data-i18n="tp1">تارگت اول (۱:۱):</span>
                 <div>
                     <strong id="tp1Price" class="ltr-text">0</strong> 
                     <span id="tp1Profit" class="green ltr-text" style="font-size: 11px; margin: 0 4px;">(+$0)</span>
                 </div>
             </div>
             <div class="fib-row">
-                <span data-i18n="tp2">تارگت دوم (فیبوناچی ۳):</span>
+                <span data-i18n="tp2">تارگت دوم (۱:۲):</span>
                 <div>
                     <strong id="tp2Price" class="ltr-text">0</strong> 
                     <span id="tp2Profit" class="green ltr-text" style="font-size: 11px; margin: 0 4px;">(+$0)</span>
                 </div>
             </div>
             <div class="fib-row">
-                <span data-i18n="tp3">تارگت سوم (فیبوناچی ۴) (دلخواه):</span>
+                <span data-i18n="tp3">تارگت سوم (۱:۳):</span>
                 <div>
                     <strong id="tp3Price" class="ltr-text">0</strong> 
                     <span id="tp3Profit" class="green ltr-text" style="font-size: 11px; margin: 0 4px;">(+$0)</span>
@@ -266,9 +269,9 @@ const i18n = {
         margin: "مارجین درگیر (Margin):",
         mc: "کال مارجین:",
         actualRisk: "ضرر واقعی (Actual Risk):",
-        tp1: "تارگت اول (فیبوناچی ۲):",
-        tp2: "تارگت دوم (فیبوناچی ۳):",
-        tp3: "تارگت سوم (فیبوناچی ۴) (دلخواه):",
+        tp1: "تارگت اول (۱:۱):",
+        tp2: "تارگت دوم (۱:۲):",
+        tp3: "تارگت سوم (۱:۳):",
         footer: "تمامی حقوق نشر (Copyright) این نرم‌افزار محفوظ است."
     },
     en: {
@@ -286,9 +289,9 @@ const i18n = {
         margin: "Required Margin:",
         mc: "Margin Call:",
         actualRisk: "Actual Risk:",
-        tp1: "Target 1 (Fib 2):",
-        tp2: "Target 2 (Fib 3):",
-        tp3: "Target 3 (Fib 4) (Custom):",
+        tp1: "Target 1 (1:1):",
+        tp2: "Target 2 (1:2):",
+        tp3: "Target 3 (1:3):",
         footer: "All rights reserved."
     },
     de: {
@@ -306,9 +309,9 @@ const i18n = {
         margin: "Benötigte Marge:",
         mc: "Margin Call:",
         actualRisk: "Tatsächliches Risiko:",
-        tp1: "Ziel 1 (Fib 2):",
-        tp2: "Ziel 2 (Fib 3):",
-        tp3: "Ziel 3 (Fib 4) (Benutzerdef.):",
+        tp1: "Ziel 1 (1:1):",
+        tp2: "Ziel 2 (1:2):",
+        tp3: "Ziel 3 (1:3):",
         footer: "Alle Rechte vorbehalten."
     }
 };
@@ -320,7 +323,6 @@ function changeLanguage() {
     document.documentElement.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
     document.documentElement.lang = currentLang;
 
-    // ترجمه متون ثابت
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (i18n[currentLang][key]) {
@@ -328,7 +330,6 @@ function changeLanguage() {
         }
     });
 
-    // ترجمه آپشن‌های جهت معامله
     document.querySelector('#positionType option[value="buy"]').textContent = i18n[currentLang].buyOpt;
     document.querySelector('#positionType option[value="sell"]').textContent = i18n[currentLang].sellOpt;
 
@@ -432,7 +433,7 @@ function resetOutputs(sym) {
 }
 
 window.onload = function() {
-    changeLanguage(); // تنظیم اولیه متون بر اساس زبان پیش‌فرض
+    changeLanguage(); 
 };
 </script>
 
